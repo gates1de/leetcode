@@ -4,28 +4,16 @@ import (
 )
 
 func countArrangement(n int) int {
-	result := 0
 	nums := make([]int, n)
+	factorial := int(1)
 	for i := 1; i <= n; i++ {
 		nums[i - 1] = i
+		factorial *= i
 	}
 
-    init := make([][]int, 0, n)
-	perm := generatePermute(nums, []int{}, init)
-
-TOP:
-	for _, p := range perm {
-		// fmt.Printf("perm = %v\n", p)
-		for i := 1; i <= len(p); i++ {
-			p_val := p[i - 1]
-			if (i % p_val) != 0 && (p_val % i) != 0 {
-				continue TOP
-			}
-		}
-		// fmt.Printf("beatiful arrangement = %v\n", p)
-		result++
-	}
-	return result
+    perm := make([][]int, 0, factorial)
+	perm = generatePermute(nums, []int{}, perm)
+	return len(perm)
 }
 
 func copySlice(target []int) []int {
@@ -34,26 +22,35 @@ func copySlice(target []int) []int {
     return result
 }
 
+func remove(i int, nums []int) []int {
+	nums = append(nums[:i], nums[i + 1:]...)
+	result := copySlice(nums)
+	return result
+}
+
 func generatePermute(nums []int, perm []int, current [][]int) [][]int {
 	n := len(nums)
 
 	if n == 0 {
-		// fmt.Printf("added perm = %v\n", perm)
-		current = append(current, perm)
-		return current
+		for i := 1; i <= len(perm); i++ {
+			p_val := perm[i - 1]
+			if (i % p_val) != 0 && (p_val % i) != 0 {
+				return current
+			}
+		}
+		return append(current, perm)
 	}
 
 	for i := 0; i < n; i++ {
-		new_nums := make([]int, 0, n)
-		new_nums = append(new_nums, nums[:i]...)
-		new_nums = append(new_nums, nums[i + 1:]...)
-		current = generatePermute(new_nums, append(perm, nums[i]), current)
+		new_perm := copySlice(append(perm, nums[i]))
+		new_nums := remove(i, copySlice(nums))
+		current = generatePermute(new_nums, new_perm, current)
 	}
 	return current
 }
 
 func main() {
-	n := 6
+	n := 7
 	r := countArrangement(n)
 	fmt.Printf("result = %v\n", r)
 }
