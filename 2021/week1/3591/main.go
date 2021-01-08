@@ -5,15 +5,12 @@ import (
 
 func countArrangement(n int) int {
 	nums := make([]int, n)
-	factorial := int(1)
 	for i := 1; i <= n; i++ {
 		nums[i - 1] = i
-		factorial *= i
 	}
-
-    perm := make([][]int, 0, factorial)
-	perm = generatePermute(nums, []int{}, perm)
-	return len(perm)
+	count := int(0)
+	search(nums, 1, &count)
+	return count
 }
 
 func copySlice(target []int) []int {
@@ -28,29 +25,26 @@ func remove(i int, nums []int) []int {
 	return result
 }
 
-func generatePermute(nums []int, perm []int, current [][]int) [][]int {
+func search(nums []int, i int, count *int) {
 	n := len(nums)
 
 	if n == 0 {
-		for i := 1; i <= len(perm); i++ {
-			p_val := perm[i - 1]
-			if (i % p_val) != 0 && (p_val % i) != 0 {
-				return current
-			}
-		}
-		return append(current, perm)
+		*count++
+		return
 	}
 
-	for i := 0; i < n; i++ {
-		new_perm := copySlice(append(perm, nums[i]))
-		new_nums := remove(i, copySlice(nums))
-		current = generatePermute(new_nums, new_perm, current)
+	for j := 0; j < n; j++ {
+		val := nums[j]
+		if (i % val) != 0 && (val % i) != 0 {
+			continue
+		}
+		new_nums := remove(j, copySlice(nums))
+		search(new_nums, i + 1, count)
 	}
-	return current
 }
 
 func main() {
-	n := 7
+	n := 11
 	r := countArrangement(n)
 	fmt.Printf("result = %v\n", r)
 }
