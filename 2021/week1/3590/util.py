@@ -1,5 +1,3 @@
-from math import sqrt
-
 class TreeNode:
     def __init__(self, x):
         self.val = x
@@ -13,37 +11,51 @@ def maketree(list: [int]) -> TreeNode:
     parent = TreeNode(list[0])
     for i in range(1, len(list)):
         val = list[i]
-        parentIndex = 0
+        parent_index = 0
         if i % 2 == 0:
-            parentIndex = i / 2
+            parent_index = int(i / 2)
         elif i % 2 == 1:
-            parentIndex = i // 2 + 1
-        parent = insert(parent, i, parentIndex, val)
+            parent_index = int(i / 2) + 1
+        insert(parent, i + 1, 1, val)
 
     return parent
 
-def insert(parent: TreeNode, i: int, parentIndex: int, val: int) -> TreeNode:
-    # print('i = {}, parent.index = {}, parent.val: {}'.format(i, parentIndex, parent.val))
+def insert(parent: TreeNode, i: int, parent_index: int, val: int) -> bool:
+    # print('i = {}, parent.index = {}, parent.val: {}'.format(i, parent_index, parent.val if parent else None))
+    if parent is None or val is None:
+        # print('Cannot insert index: {}, val: {}'.format(i, val))
+        return False
 
-    if parentIndex == i / 2:
+    if parent_index * 2 == i:
         if parent.left is None:
             parent.left = TreeNode(val)
-            print('i: {}, parent.val: {}, parent.left.val: {}'.format(i, parent.val, parent.left.val))
-        else:
-            return insert(parent.left, i, parentIndex, val)
-    elif parentIndex == i // 2 + 1:
+            # print('i: {}, parent.val: {}, parent.left.val: {}'.format(i, parent.val, parent.left.val))
+            return True
+    elif parent_index * 2 + 1 == i:
         if parent.right is None:
             parent.right = TreeNode(val)
-            print('i: {}, parent.val: {}, parent.right.val: {}'.format(i, parent.val, parent.right.val))
-        else:
-            return insert(parent.right, i, parentIndex, val)
+            # print('i: {}, parent.val: {}, parent.right.val: {}'.format(i, parent.val, parent.right.val))
+            return True
 
-    return parent
+    if parent_index * 2 > i:
+        # print('Cannot insert index: {}'.format(i))
+        return False
 
-def main():
-    # original = maketree([7, 4, 3, None, None, 6, 19])
-    original = maketree([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    is_inserted = insert(parent.left, i, parent_index * 2, val)
+    if is_inserted:
+        return True
 
-if __name__ == '__main__':
-    main()
+    return insert(parent.right, i, parent_index * 2 + 1, val)
+
+def print_result(target: TreeNode, index: int, is_left: bool) -> bool:
+    if index == 1:
+        print('root node val: {}'.format(target.val))
+    else:
+        print('current node index: {}, val: {}'.format(index, target.val))
+
+    if target.left:
+        print_result(target.left, index * 2, True)
+
+    if target.right:
+        print_result(target.right, index * 2 + 1, False)
 
