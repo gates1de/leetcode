@@ -1,9 +1,26 @@
 package main
 import (
 	"fmt"
+	"./bit"
 )
 
+// Accepted
 func createSortedArray(instructions []int) int {
+	bit := bit.New(getMax(instructions) + 2)
+	cost := int(0)
+	for i, val := range instructions {
+		fmt.Printf("i = %v, val = %v\n", i, val)
+		lessCost := bit.GetCost(val)
+		greaterCost := i - bit.GetCost(val + 1)
+		fmt.Printf("min(%v, %v) = %v\n", lessCost, greaterCost, min(lessCost, greaterCost))
+		cost += min(lessCost, greaterCost)
+		bit.Update(val + 1, 1)
+	}
+	return cost % (1e9 + 7)
+}
+
+// Timeout Limit Exceeded
+func mySolution(instructions []int) int {
 	sortedList := make([]int, len(instructions))
 	cost := int(0)
 	for i, val := range instructions {
@@ -51,6 +68,16 @@ func min(a, b int) int {
         return a
     }
     return b
+}
+
+func getMax(s []int) int {
+	result := int(0)
+	for _, v := range s {
+		if v > result {
+			result = v
+		}
+	}
+	return result
 }
 
 func count(list []int, target int) int {
