@@ -3,7 +3,12 @@ import (
 	"fmt"
 )
 
+func solution() int {
+	return 0
+}
+
 func main() {
-	fmt.Println("Hello, world!")
+	result := solution()
+	fmt.Printf("result = %v\n", result)
 }
 
