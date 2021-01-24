@@ -14,9 +14,8 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	}
 	l1RDL := reverseDigitList(l1, []int{})
 	l2RDL := reverseDigitList(l2, []int{})
-	sum := digitToInt(l1RDL) + digitToInt(l2RDL)
-	DL := toDigitList(sum, []int{})
-	// fmt.Printf("l1RDL = %v, l2RDL = %v, sum = %v, DL = %v\n", l1RDL, l2RDL, sum, DL)
+	DL := addDigit(l1RDL, l2RDL)
+	// fmt.Printf("l1RDL = %v, l2RDL = %v, DL = %v\n", l1RDL, l2RDL, DL)
 	var result *ListNode
 	result = makeListNode(DL, result)
 	return result
@@ -30,20 +29,42 @@ func reverseDigitList(l *ListNode, result []int) []int {
 	return result
 }
 
-func toDigitList(target int64, result []int) []int {
+func toDigitList(target int, result []int) []int {
 	// fmt.Printf("target = %v, result = %v\n", target, result)
     if target > 0 {
-        return toDigitList(target / 10, append(result, int(target % 10)))
+        return toDigitList(target / 10, append(result, target % 10))
     }
     return result
 }
 
-func digitToInt(target []int) int64 {
-	i := int64(1)
-	result := int64(0)
-	for j, _ := range target {
-		result += int64(target[len(target) - j - 1]) * i
-		i *= 10
+func addDigit(d1 []int, d2 []int) []int {
+	maxLen := len(d1)
+	if len(d1) < len(d2) {
+		maxLen = len(d2)
+	}
+
+	result := []int{}
+	carryD := int(0)
+	for i := 0; i < maxLen; i++ {
+		d := int(carryD)
+		if len(d1) > i {
+			d += d1[len(d1) - i - 1]
+		}
+		if len(d2) > i {
+			d += d2[len(d2) - i - 1]
+		}
+
+		if d >= 10 {
+			carryD = d / 10
+			d -= 10
+		} else {
+			carryD = 0
+		}
+		// fmt.Printf("d = %v, carryD = %v\n", d, carryD)
+		result = append(result, d)
+	}
+	if carryD > 0 {
+		result = append(result, carryD)
 	}
 	return result
 }
