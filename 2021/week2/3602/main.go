@@ -4,7 +4,25 @@ import (
 	"sort"
 )
 
+// Accepted
 func numRescueBoats(people []int, limit int) int {
+	sort.Slice(people, func(i, j int) bool { return people[i] < people[j] })
+	// fmt.Printf("sortedP = %v\n", people)
+	i := int(0)
+	j := len(people) - 1
+	result := int(0)
+    for i <= j {
+        result += 1
+        if people[i] + people[j] <= limit {
+            i += 1
+		}
+        j -= 1
+	}
+    return result
+}
+
+// Timeout Limit Exceeded
+func mySolution(people []int, limit int) int {
 	if len(people) == 0 {
 		return 0
 	}
@@ -55,7 +73,8 @@ func numRescueBoats(people []int, limit int) int {
 
 func searchMore(s []int, target int) int {
 	result := int(-1)
-	for i, val := range s {
+	for i, _ := range s {
+		val := s[len(s) - i - 1]
 		if val <= 0 {
 			continue
 		}
