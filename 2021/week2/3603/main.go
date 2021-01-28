@@ -5,6 +5,30 @@ import (
 
 func minOperations(nums []int, x int) int {
 	result := int(-1)
+	numsSum := sum(nums)
+	maxSubarraySum := numsSum - x
+
+	currentMax := int(0)
+	// j is max subarray start index
+	j := int(0)
+	for i, val := range nums {
+		currentMax += val
+		for currentMax > maxSubarraySum && i >= j {
+			currentMax -= nums[j]
+			j++
+		}
+		if maxSubarraySum == currentMax {
+			result = max(result, i - j + 1)
+		}
+	}
+	if result == -1 {
+		return result
+	}
+	return len(nums) - result
+}
+
+func ngSolution(nums []int, x int) int {
+	result := int(-1)
 	leftSum := int(0)
 	rightSum := int(0)
 	// left index
@@ -71,6 +95,21 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func max(a, b int) int {
+	if a < b {
+		return b
+	}
+	return a
+}
+
+func sum(nums []int) int {
+	result := int(0)
+	for _, val := range nums {
+		result += val
+	}
+	return result
 }
 
 func main() {
