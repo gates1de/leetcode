@@ -1,10 +1,26 @@
 package main
 import (
 	"fmt"
+	"sort"
 	"time"
 )
 
 func mostCompetitive(nums []int, k int) []int {
+	result := []int{}
+	rem := k - len(nums)
+
+	for i, num := range nums {
+	    for len(result) > max(0, rem + i) && num < result[len(result) - 1] {
+			result = result[:len(result) - 1]
+		}
+	    result = append(result, num)
+	}
+
+	return result[:k]
+}
+
+// Timeout Limit Exceeded
+func mySolution(nums []int, k int) []int {
 	result := make([]int, k)
 	minIndex := int(0)
 	for i := 0; i < k; i++ {
@@ -21,7 +37,7 @@ func mostCompetitive(nums []int, k int) []int {
 	return result
 }
 
-func min(a int, b int) int {
+func max(a int, b int) int {
 	if a < b {
 		return b
 	}
@@ -30,15 +46,28 @@ func min(a int, b int) int {
 
 // return value is (min num, index)
 func getMinFromSlice(nums []int) (int, int) {
+	if len(nums) == 0 {
+		return -1, -1
+	}
 	result := int(-1)
 	index := int(-1)
+	sortedNums := copySlice(nums)
+	sort.Slice(sortedNums, func(i, j int) bool { return sortedNums[i] < sortedNums[j] })
+	min := sortedNums[0]
 	for i, n := range nums {
-		if result == -1 || result > n {
+		if n == min {
 			result = n
 			index = i
+			break
 		}
 	}
 	return result, index
+}
+
+func copySlice(target []int) []int {
+    result := make([]int, len(target))
+    copy(result, target)
+    return result
 }
 
 func main() {
