@@ -1,5 +1,7 @@
 package main
 import (
+	localHeap "./heap"
+	"container/heap"
 	"fmt"
 	"sort"
 )
@@ -12,7 +14,53 @@ type Node struct {
 	Ref *Node
 }
 
+// Accepted
 func minimumEffortPath(heights [][]int) int {
+	if len(heights) <= 0 || len(heights[0]) <= 0 {
+		return 0
+	}
+	maxX := len(heights[0]) - 1
+	maxY := len(heights) - 1
+	h := &localHeap.Heap{}
+	heap.Init(h)
+	dir := [][]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
+
+	visited := make([][]bool, len(heights))
+	for i := range visited {
+		visited[i] = make([]bool, len(heights[0]))
+	}
+	heap.Push(h, []int{0, 0, 0})
+
+	for h.Len() > 0 {
+		top := heap.Pop(h).([]int)
+		if visited[top[0]][top[1]] {
+			continue
+		}
+		visited[top[0]][top[1]] = true
+
+		if top[0] == maxY && top[1] == maxX {
+			return top[2]
+		}
+
+		for _, d := range dir {
+			newY, newX := top[0] + d[0], top[1] + d[1]
+
+			if (newX < 0 || maxX < newX) || (newY < 0 || maxY < newY) {
+				continue
+			}
+
+			heap.Push(h, []int{
+				newY, newX, max(top[2],
+					abs(heights[newY][newX], heights[top[0]][top[1]])),
+			})
+		}
+	}
+
+	return 0
+}
+
+// Timeout Limit Exceeded
+func mySolution(heights [][]int) int {
 	if len(heights) <= 0 || len(heights[0]) <= 0 {
 		return 0
 	}
