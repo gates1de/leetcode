@@ -9,16 +9,30 @@ func nextPermutation(nums []int) {
 		return
 	}
 
+	targetNums := nums
+	max := nums[len(nums) - 1]
+	for i := len(nums) - 1; i >= 0; i-- {
+		num := nums[i]
+		if max < num {
+			max = num
+		}
+		if max > num {
+			targetNums = nums[i:]
+			break
+		}
+	}
+	// fmt.Printf("targetNums = %v\n", targetNums)
+
 	swapIndex := int(-1)
 TOP:
-	for i := len(nums) - 1; i > 0; i-- {
-		num := nums[i]
+	for i := len(targetNums) - 1; i >= 0; i-- {
+		num := targetNums[i]
 		for j := i - 1; j >= 0; j-- {
-			n := nums[j]
+			n := targetNums[j]
 			fmt.Printf("num = %v, n = %v\n", num, n)
 			if num > n {
-				nums[i] = n
-				nums[j] = num
+				targetNums[i] = n
+				targetNums[j] = num
 				swapIndex = j
 				break TOP
 			}
@@ -26,11 +40,10 @@ TOP:
 	}
 
 	if swapIndex >= 0 {
-		targetNums := nums[swapIndex + 1:]
-		// fmt.Printf("swapIndex = %v, targetNums = %v\n", swapIndex, targetNums)
-		sort.Slice(targetNums, func (i, j int) bool { return targetNums[i] < targetNums[j] })
+		sortTargetNums := targetNums[swapIndex + 1:]
+		sort.Slice(sortTargetNums, func (i, j int) bool { return sortTargetNums[i] < sortTargetNums[j] })
 	} else if swapIndex < 0 {
-		sort.Slice(nums, func (i, j int) bool { return nums[i] < nums[j] })
+		sort.Slice(targetNums, func (i, j int) bool { return targetNums[i] < targetNums[j] })
 	}
 }
 
