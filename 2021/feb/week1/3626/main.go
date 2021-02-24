@@ -4,13 +4,24 @@ import (
 	"fmt"
 )
 
+// Correct Answer
 func trimBST(root *treenode.TreeNode, low int, high int) *treenode.TreeNode {
 	fmt.Printf("root = %v\n", root)
-	root = traversalTrim(root, low, high)
+	if root == nil {
+		return root
+	} else if root.Val > high {
+		return trimBST(root.Left, low, high)
+	} else if root.Val < low {
+		return trimBST(root.Right, low, high)
+	}
+
+	root.Left = trimBST(root.Left, low, high)
+	root.Right = trimBST(root.Right, low, high)
 	return root
 }
 
-func traversalTrim(target *treenode.TreeNode, low int, high int) *treenode.TreeNode {
+// Wrong Answer
+func ngSolution(target *treenode.TreeNode, low int, high int) *treenode.TreeNode {
 	fmt.Printf("target = %v\n", target)
 	if target == nil {
 		return nil
