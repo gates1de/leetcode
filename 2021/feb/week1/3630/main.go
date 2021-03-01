@@ -2,6 +2,8 @@ package main
 import (
 	"./treenode"
 	"fmt"
+	"reflect"
+	"sort"
 )
 
 func rightSideView(root *treenode.TreeNode) []int {
@@ -9,19 +11,49 @@ func rightSideView(root *treenode.TreeNode) []int {
 		return []int{}
 	}
 	// printNode(root)
-	// fmt.Printf("root = %v, left = %v, right = %v\n", root, root.Left, root.Right)
 
 	result := []int{}
-	for root != nil {
-		result = append(result, root.Val)
-		// fmt.Printf("root = %v\n", root)
-		if root.Right != nil {
-			root = root.Right
-		} else {
-			root = root.Left
-		}
+	rightNums := &map[int]int{1: root.Val}
+	traversal(root, rightNums, 1)
+	// fmt.Printf("rightNums = %v\n", rightNums)
+	sortedKeys := sortedKeys(*rightNums)
+	for _, key := range sortedKeys {
+		result = append(result, (*rightNums)[key])
 	}
 	return result
+}
+
+func traversal(root *treenode.TreeNode, rightNums *map[int]int, depth int) {
+	if root == nil {
+		return
+	}
+
+	// fmt.Printf("root = %v\n", root)
+
+	if _, ok := (*rightNums)[depth]; !ok {
+		(*rightNums)[depth] = root.Val
+	}
+	traversal(root.Right, rightNums, depth + 1)
+	traversal(root.Left, rightNums, depth + 1)
+}
+
+func sortedKeys(m interface{}) []int {
+    v := reflect.ValueOf(m)
+    if v.Kind() != reflect.Map {
+        return []int{}
+    }
+
+    keys := v.MapKeys()
+
+    result := make([]int, len(keys))
+    index := int(0)
+    for _, k := range keys {
+        key := k.Convert(v.Type().Key())
+        result[index] = key.Interface().(int)
+        index++
+    }
+    sort.Slice(result, func (i, j int) bool { return result[i] < result[j] })
+    return result
 }
 
 func printNode(root *treenode.TreeNode) {
