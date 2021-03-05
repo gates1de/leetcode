@@ -9,46 +9,22 @@ func convertBST(root *treenode.TreeNode) *treenode.TreeNode {
 		return root
 	}
 
-	countMap := map[int]int{}
 	sum := int(0)
-	maxIndex := int(1)
-	traversal(root, 1, &sum, &countMap)
-	findMaxIndex(root, 1, &maxIndex)
-	fmt.Printf("countMap = %v, maxIndex = %v\n", countMap, maxIndex)
-	counts := make([]int, maxIndex)
-	for i := 0; i < maxIndex; i++ {
-		value, ok := countMap[i + 1]
-		if !ok {
-			counts[i] = -10001
-        } else {
-			counts[i] = value
-		}
-	}
-	// fmt.Printf("counts = %v\n", counts)
-	return treenode.Maketree(counts)
+	result := &treenode.TreeNode{Val: root.Val}
+	result = traversal(root, result, 1, &sum)
+	return result
 }
 
-func traversal(node *treenode.TreeNode, index int, sum *int, countMap *map[int]int) {
+func traversal(node *treenode.TreeNode, result *treenode.TreeNode, index int, sum *int) *treenode.TreeNode {
 	if node == nil {
-		// fmt.Printf("%v: nil\n", index)
-		return
+		return nil
 	}
-	traversal(node.Right, index * 2 + 1, sum, countMap)
+	result = &treenode.TreeNode{Val: 0}
+	result.Right = traversal(node.Right, result.Right, index * 2 + 1, sum)
 	*sum += node.Val
-	// fmt.Printf("%v: sum = %v\n", index, *sum)
-	(*countMap)[index] = *sum
-	traversal(node.Left, index * 2, sum, countMap)
-}
-
-func findMaxIndex(root *treenode.TreeNode, index int, result *int) {
-    if root == nil {
-        return
-    }
-	if index > *result {
-		*result = index
-	}
-    findMaxIndex(root.Left, index * 2, result)
-    findMaxIndex(root.Right, index * 2 + 1, result)
+	result.Val = *sum
+	result.Left = traversal(node.Left, result.Left, index * 2, sum)
+	return result
 }
 
 func printNode(root *treenode.TreeNode, index int) {
