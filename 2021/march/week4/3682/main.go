@@ -1,9 +1,50 @@
 package main
 import (
 	"fmt"
+	"math"
 )
 
+// https://dev.to/seanpgallivan/solution-3sum-with-multiplicity-12ma#idea
 func threeSumMulti(arr []int, target int) int {
+	nmap := map[int]int{}
+	third := int(math.Ceil(float64(target) / 3))
+	result := int(0)
+	for _, num := range arr {
+		nmap[num] += 1
+	}
+	i := min(target, 100)
+	for i >= third {
+		remain := target - i
+		half := int(math.Ceil(float64(remain) / 2))
+		j := min(remain, i)
+		for j >= half {
+			k := remain - j
+			x, y, z := nmap[k], nmap[j], nmap[i]
+			if k == i {
+				result += x * (x - 1) * (x - 2) / 6
+			} else if k == j {
+				result += x * (x - 1) / 2 * z
+			} else if j == i {
+				result += x * y * (y - 1) / 2
+			} else {
+				result += x * y * z
+			}
+			j--
+		}
+		i--
+	}
+	return result % (1e9 + 7)
+}
+
+func min(a, b int) int {
+	if b < a {
+		return b
+	}
+	return a
+}
+
+// Time Limit Exceeded
+func ngSolution(arr []int, target int) int {
 	if len(arr) < 3 {
 		return 0
 	} else if len(arr) == 3 {
