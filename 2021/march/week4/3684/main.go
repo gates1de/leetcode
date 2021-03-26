@@ -3,7 +3,87 @@ import (
 	"fmt"
 )
 
+var direction [][]int = [][]int{
+	{0, 1},
+	{0, -1},
+	{1, 0},
+	{-1, 0},
+}
+
 func pacificAtlantic(matrix [][]int) [][]int {
+	// later code assume matrix[0] exist
+	if len(matrix) == 0 {
+		return [][]int{}
+	}
+
+	pacificVisited := make([][]bool, len(matrix))
+	atlanticVisited := make([][]bool, len(matrix))
+	for i := range pacificVisited {
+		pacificVisited[i] = make([]bool, len(matrix[0]))
+		atlanticVisited[i] = make([]bool, len(matrix[0]))
+	}
+
+	// pacific reachable points (matrix left or top edge)
+	q1 := make([][]int, 0)
+	for j := range matrix[0] {
+		q1 = append(q1, []int{0, j})
+	}
+	for i := 1; i < len(matrix); i++ {
+		q1 = append(q1, []int{i, 0})
+	}
+	bfs(matrix, q1, pacificVisited)
+
+	// atlantic reachable points (matrix right or bottom edge)
+	q2 := make([][]int, 0)
+	for j := range matrix[0] {
+		q2 = append(q2, []int{len(matrix) - 1, j})
+	}
+	for i := 0; i < len(matrix)-1; i++ {
+		q2 = append(q2, []int{i, len(matrix[0]) - 1})
+	}
+	bfs(matrix, q2, atlanticVisited)
+
+	result := make([][]int, 0)
+
+	for i := range pacificVisited {
+		for j := range pacificVisited[0] {
+			if pacificVisited[i][j] && atlanticVisited[i][j] {
+				result = append(result, []int{i, j})
+			}
+		}
+	}
+
+	return result
+}
+
+func bfs(matrix [][]int, queue [][]int, visited [][]bool) {
+	for len(queue) > 0 {
+		q := queue[0]
+		queue = queue[1:]
+
+		if visited[q[0]][q[1]] {
+			continue
+		}
+
+		for _, dir := range direction {
+			x := q[1] + dir[1]
+			y := q[0] + dir[0]
+
+			if validPoint(matrix, x, y) && matrix[y][x] >= matrix[q[0]][q[1]] {
+				queue = append(queue, []int{y, x})
+			}
+		}
+
+		visited[q[0]][q[1]] = true
+	}
+}
+
+func validPoint(matrix [][]int, x, y int) bool {
+	return x >= 0 && y >= 0 && x < len(matrix[0]) && y < len(matrix)
+}
+
+// Wrong Answer
+func ngSolution(matrix [][]int) [][]int {
     if len(matrix) <= 0 || len(matrix[0]) <= 0 {
         return [][]int{}
     }
