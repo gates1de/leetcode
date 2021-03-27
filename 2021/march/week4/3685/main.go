@@ -6,6 +6,46 @@ import (
 )
 
 func wordSubsets(A []string, B []string) []string {
+	BFreq := map[string]int{}
+	result := []string{}
+	countMax := int(0)
+	for _, word := range B {
+		for _, r := range word {
+			char := string(r)
+			count := strings.Count(word, char)
+			if BFreq[char] != 0 {
+				diff := count - BFreq[char]
+				if diff > 0 {
+					BFreq[char] = count
+					countMax += diff
+				}
+			} else {
+				BFreq[char] = count
+				countMax += count
+			}
+		}
+		if countMax > 10 {
+			return result
+		}
+	}
+
+TOP:
+	for _, word := range A {
+		if len(word) < countMax {
+			continue
+		}
+		for char, _ := range BFreq {
+			if strings.Count(word, char) < BFreq[char] {
+				continue TOP
+			}
+		}
+		result = append(result, word)
+	}
+	return result
+}
+
+// Time Limit Exceeded
+func ngSolution(A []string, B []string) []string {
 	uniqueB := []string{}
 	bMap := map[string]int{}
 	sort.Slice(B, func (a, b int) bool { return len(B[a]) > len(B[b]) })
