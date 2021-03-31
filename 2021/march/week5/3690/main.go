@@ -5,6 +5,34 @@ import (
 )
 
 func maxEnvelopes(envelopes [][]int) int {
+    sort.Slice(envelopes, func (a, b int) bool {
+        if envelopes[a][0] < envelopes[b][0] {
+            return true
+        } else if envelopes[a][0] > envelopes[b][0] {
+            return false
+        } else {
+            return envelopes[a][1] > envelopes[b][1]
+        }
+    })
+
+    dp := make([]int, len(envelopes))
+    result := 0
+
+    for i := 0; i < len(envelopes); i++  {
+        pos := sort.SearchInts(dp[:result], envelopes[i][1])
+		// fmt.Printf("pos = %v, result = %v, envelopes[%v][1] = %v\n", pos, result, i, envelopes[i][1])
+        dp[pos] = envelopes[i][1]
+
+        if pos == result {
+            result++
+        }
+    }
+
+    return result
+}
+
+// Wrong Answer
+func ngSolution(envelopes [][]int) int {
 	if len(envelopes) <= 1 {
 		return len(envelopes)
 	}
