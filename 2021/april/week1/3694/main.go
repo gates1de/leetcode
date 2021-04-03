@@ -6,6 +6,30 @@ import (
 )
 
 func findMaxForm(strs []string, m int, n int) int {
+    memo := make([][]int, m + 1)
+    for i := range memo {
+        memo[i] = make([]int, n + 1)
+    }
+    for _, s := range strs {
+        zeroCount := strings.Count(s, "0")
+        oneCount := len(s) - zeroCount
+		// fmt.Printf("s = %v\n", s)
+        for i := m; i >= zeroCount; i-- {
+            for j := n; j >= oneCount; j-- {
+                t := memo[i - zeroCount][j - oneCount] + 1
+				// fmt.Printf("memo[%v][%v] = %v, memo[%v][%v] = %v\n", i - zeroCount, j - oneCount, memo[i - zeroCount][j - oneCount] + 1, i, j, memo[i][j])
+                if t > memo[i][j] {
+                    memo[i][j] = t
+                }
+				// fmt.Printf("memo[%v][%v] = %v\n", i, j, t)
+            }
+        }
+    }
+    return memo[m][n]
+}
+
+// Wrong Answer
+func ngSolution(strs []string, m int, n int) int {
 	i := int(0)
 	result := []string{}
 
