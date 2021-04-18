@@ -5,6 +5,34 @@ import (
 )
 
 func numSubmatrixSumTarget(matrix [][]int, target int) int {
+	m := len(matrix)
+	n := len(matrix[0])
+	for i := 0; i < m; i++ {
+		for j := 0; j < n - 1; j++ {
+			matrix[i][j + 1] += matrix[i][j]
+		}
+	}
+	result := int(0)
+	for i := 0; i < n; i++ {
+		for j := i; j < n; j++ {
+			preSums := map[int]int{0: 1}
+			s := 0
+			for k := 0; k < m; k++ {
+				if i > 0 {
+					s += matrix[k][j] - matrix[k][i - 1]
+				} else {
+					s += matrix[k][j]
+				}
+				result += preSums[s - target]
+				preSums[s]++
+			}
+		}
+	}
+	return result
+}
+
+// Time Limit Exceeded
+func ngSolution(matrix [][]int, target int) int {
 	if len(matrix) == 0 {
 		return 0
 	}
@@ -51,16 +79,16 @@ func sum(rowStart, rowSize, columnStart, columnSize int, matrix [][]int) int {
 
 func main() {
 	// result: 4
-	// matrix := [][]int{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}
-	// target := int(0)
+	matrix := [][]int{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}
+	target := int(0)
 
 	// result: 5
 	// matrix := [][]int{{1, -1}, {-1, 1}}
 	// target := int(0)
 
 	// result: 0
-	matrix := [][]int{{904}}
-	target := int(0)
+	// matrix := [][]int{{904}}
+	// target := int(0)
 
 	// result: 
 	// matrix := [][]int{}
