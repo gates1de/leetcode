@@ -1,0 +1,42 @@
+package main
+import (
+	"fmt"
+)
+
+func isPowerOfThree(n int) bool {
+	fmt.Printf("n = %v\n", n)
+	if n == 0 {
+		return false
+	} else if n == 1 {
+		return true
+	}
+
+	if n / 3 <= 1 {
+		return n % 3 == 0
+	}
+	return isPowerOfThree((n / 3) + (n % 3))
+}
+
+func main() {
+	// result: true
+	// n := int(27)
+
+	// result: false
+	// n := int(0)
+
+	// result: false
+	// n := int(45)
+
+	// result: true
+	// n := int(1)
+
+	// result: false
+	n := int(19684)
+
+	// result: 
+	// n := int(0)
+
+	result := isPowerOfThree(n)
+	fmt.Printf("result = %v\n", result)
+}
+
