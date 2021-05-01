@@ -1,0 +1,79 @@
+package main
+import (
+	"fmt"
+)
+
+func powerfulIntegers(x int, y int, bound int) []int {
+	if bound <= 1 {
+		return []int{}
+	} else if bound == 2 {
+		return []int{2}
+	}
+
+	result := []int{}
+	sums := map[int]int{}
+	dfs(x, y, bound, 1, 1, sums)
+	for num, _ := range sums {
+		result = append(result, num)
+	}
+	return result
+}
+
+func pow(x, y int) int {
+	if x == 1 || y == 0 {
+		return 1
+	}
+	result := x
+	for i := 1; i < y; i++ {
+		result *= x
+	}
+	return result
+}
+
+func dfs(x int, y int, bound int, currentX int, currentY int, sums map[int]int) {
+	fmt.Printf("currentX = %v, currentY = %v, sums = %v\n", currentX, currentY, sums)
+	currentSum := currentX + currentY
+	if currentSum > bound {
+		return
+	}
+	sums[currentSum]++
+	if x > 1 {
+		// nextExpX := int(math.Floor(float64(currentX) / float64(x))) + 1
+		dfs(x, y, bound, currentX * x, currentY, sums)
+	}
+	if y > 1 {
+		// nextExpY := int(math.Floor(float64(currentY) / float64(y))) + 1
+		dfs(x, y, bound, currentX, currentY * y, sums)
+	}
+}
+
+func main() {
+	// result: [2, 3, 4, 5, 7, 9, 10]
+	// x := int(2)
+	// y := int(3)
+	// bound := int(10)
+
+	// result: [2, 4, 6, 8, 10, 14]
+	x := int(3)
+	y := int(5)
+	bound := int(15)
+
+	// result: [2, 3, 5, 9]
+	// x := int(2)
+	// y := int(1)
+	// bound := int(10)
+
+	// result: [33, 2, 3, 5, 65, 9, 17]
+	// x := int(1)
+	// y := int(2)
+	// bound := int(100)
+
+	// result: []
+	// x := int(0)
+	// y := int(0)
+	// bound := int(0)
+
+	result := powerfulIntegers(x, y, bound)
+	fmt.Printf("result = %v\n", result)
+}
+
