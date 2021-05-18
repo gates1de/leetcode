@@ -6,6 +6,44 @@ import (
 )
 
 func longestStrChain(words []string) int {
+    n := len(words)
+    dp := make([]int, n)
+    globalMax := 1
+    sort.SliceStable(words, func(i, j int) bool {
+        return len(words[i]) < len(words[j])
+    })
+    lenPositions := make(map[int]int)
+    for i := range words {
+        lenPositions[len(words[i])] = i
+    }
+    for i := 0; i < n; i++ {
+        currMax := 1
+        if pos, ok := lenPositions[len(words[i]) - 1]; ok {
+            for j := pos; j >= 0 && len(words[i]) - len(words[j]) == 1; j-- {
+                if isChainable(words[j], words[i]) {
+                    currMax = max(currMax, dp[j] + 1)
+                }
+            }
+        }
+        dp[i] = currMax
+        globalMax = max(globalMax, currMax)
+    }
+    return globalMax
+}
+
+func isChainable(s1, s2 string) bool {
+    i := 0
+    for i < len(s1) {
+        if s1[i] != s2[i] {
+            break
+        }
+        i++
+    }
+    return s1 == s2[0:i]+s2[i+1:]
+}
+
+// Time Limit Exceeded
+func ngSolution(words []string) int {
 	if len(words) <= 1 {
 		return len(words)
 	} else if len(words) == 2 {
