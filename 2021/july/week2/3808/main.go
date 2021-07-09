@@ -4,6 +4,42 @@ import (
 )
 
 func lengthOfLIS(nums []int) int {
+    if len(nums) == 0 {
+        return 0
+    }
+
+    dp := make([]int, len(nums))
+    dp[0] = nums[0]
+
+    hi := 0
+
+    for i := 1; i < len(nums); i++ {
+        index := binarySearchIndex(dp, nums[i], 0, hi)
+        dp[index] = nums[i]
+        if index == hi + 1 {
+            hi++
+        }
+    }
+
+    return hi + 1
+}
+
+func binarySearchIndex(dp []int, target, lo int, hi int) int {
+    for lo <= hi {
+        mid := lo + (hi - lo) / 2
+        if dp[mid] > target {
+            hi = mid - 1
+        } else if dp[mid] < target {
+            lo = mid + 1
+        } else {
+            return mid
+        }
+    }
+    return lo
+}
+
+// Time Limit Exceeded
+func ngSolution(nums []int) int {
 	if len(nums) == 1 {
 		return 1
 	} else if len(nums) == 2 {
