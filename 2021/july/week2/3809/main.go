@@ -11,6 +11,69 @@ const two = byte(50)
 const six = byte(54)
 
 func numDecodings(s string) int {
+    memo := make([]int, len(s) + 1)
+    for i := 0; i < len(memo); i++ {
+        memo[i] = modulo
+    }
+    res := helper(s, memo)
+    return res
+}
+
+func helper(s string, memo []int) int {
+    if memo[len(s)] != modulo {
+        return memo[len(s)]
+    }
+
+    if len(s) == 0  {
+        return 1
+    }
+
+
+    if len(s) == 1 {
+        if s[0] == '0' {
+            return 0
+        }
+        if s[0] == '*' {
+            return 9
+        }
+        return 1
+    }
+
+    res := 0
+    if s[0] == '1' {
+        res = (res + helper(s[1:], memo)) % modulo
+        if s[1] == '*' {
+            res = (res + helper(s[2:], memo) * 9) % modulo
+        } else {
+            res = (res + helper(s[2:], memo)) % modulo
+        }
+    } else if s[0] == '2' {
+        res = (res + helper(s[1:], memo)) % modulo
+        if s[1] == '*' {
+            res = (res + helper(s[2:], memo) * 6) % modulo
+        } else if s[1] <= '6' {
+            res = (res + helper(s[2:], memo)) % modulo
+        }
+    } else if s[0] == '0' {
+        res = 0
+    } else if s[0] == '*' {
+        res = (res + helper(s[1:], memo) * 9) % modulo
+        if s[1] == '*' {
+            res = (res + helper(s[2:], memo) * 15) % modulo
+        } else if s[1] <= '6' {
+            res = (res + helper(s[2:], memo) * 2) % modulo
+        } else {
+            res = (res + helper(s[2:], memo)) % modulo
+        }
+    } else {
+        res = (res + helper(s[1:], memo)) % modulo
+    }
+    memo[len(s)] = res
+    return res
+}
+
+// Wrong Answer
+func ngSolution(s string) int {
 	if s[0] == zero {
 		return 0
 	}
@@ -137,10 +200,10 @@ func main() {
 	// s := "*0**0"
 
 	// result: 285
-	// s := "1*72*"
+	s := "1*72*"
 
 	// result: 0
-	s := "96603"
+	// s := "96603"
 
 	// result: 
 	// s := ""
