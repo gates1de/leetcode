@@ -3,7 +3,59 @@ import (
 	"fmt"
 )
 
+// REF: https://leetcode.com/problems/three-equal-parts/discuss/468725/Go-O(n)-solution-with-detailed-explanation
 func threeEqualParts(arr []int) []int {
+	if len(arr) < 3 {
+		return []int{-1, -1}
+	}
+	oneCount := int(0)
+	for i := range arr {
+		if arr[i] == 1 {
+			oneCount++
+		}
+	}
+	if oneCount == 0 {
+		return []int{0, 2}
+	}
+	if oneCount % 3 != 0 {
+		return []int{-1, -1}
+	}
+
+	counter := oneCount / 3
+	r := len(arr) - 1
+	rCounter := int(0)
+	for rCounter < counter {
+		if arr[r] == 1 {
+			rCounter++
+		}
+		r--
+	}
+	lp := len(arr) - r - 1
+	l := int(0)
+	for arr[l] == 0 {
+		l++
+	}
+
+	for i := 0; i < lp; i++ {
+		if arr[l + i] != arr[r + 1 + i] {
+			return []int{-1, -1}
+		}
+	}
+	m := l + lp
+	for arr[m] == 0 {
+		m++
+	}
+
+	for i := 0; i < lp; i++ {
+		if arr[m + i] != arr[r + 1 + i] {
+			return []int{-1, -1}
+		}
+	}
+	return []int{l + lp - 1, m + lp}
+}
+
+// Time Limit Exceeded
+func ngSolution(arr []int) []int {
 	result := []int{-1, -1}
 	i := int(0)
 	j := len(arr) - 1
