@@ -4,7 +4,27 @@ import (
 	"sort"
 )
 
+// REF: https://leetcode.com/problems/partition-array-into-disjoint-intervals/discuss/1030544/Go
 func partitionDisjoint(nums []int) int {
+    copyNums := nums
+    res := 1
+    max := nums[0]
+    subMax := nums[0]
+    for i := 1; i < len(nums); i++ {
+        if copyNums[i] < max {
+            max = subMax
+            res = i + 1
+        } else {
+            if copyNums[i] > subMax {
+                subMax = copyNums[i]
+            }
+        }
+    }
+    return res
+}
+
+// Wrong Answer
+func ngSolution(nums []int) int {
 	minIndex := int(0)
 	maxIndex := len(nums) - 1
 	sortedNums := make([]int, maxIndex - minIndex + 1)
