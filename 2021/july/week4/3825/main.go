@@ -4,6 +4,61 @@ import (
 	"reflect"
 )
 
+func findLadders(beginWord string, endWord string, wordList []string) [][]string {
+    var queue [][]string
+    queue = append(queue, []string{beginWord})
+    visited := make(map[string]bool)
+    end := false
+    for len(queue) > 0 && !end {
+        l := len(queue)
+        for i := 0; i < l; i++ {
+            lastWord := queue[i][len(queue[i]) - 1]
+            for j := 0; j < len(wordList); j++ {
+                if canTransformed(lastWord, wordList[j]) {
+                    if wordList[j] == endWord {
+                        end = true
+                    }
+                    newPath := append([]string{}, queue[i]...)
+                    newPath = append(newPath, wordList[j])
+                    queue = append(queue, newPath)
+                    visited[wordList[j]] = true
+                }
+            }
+        }
+
+        var newWordList []string
+        for i := 0; i < len(wordList); i++ {
+            if !visited[wordList[i]] {
+                newWordList = append(newWordList, wordList[i])
+            }
+        }
+        wordList = newWordList
+
+        queue = queue[l:]
+    }
+    var result [][]string
+    for _, v := range queue {
+        if v[len(v) - 1] == endWord {
+            result = append(result, v)
+        }
+    }
+    return result
+}
+
+func canTransformed(a string, b string)  bool {
+    diff := 0
+    for i := 0; i < len(a); i++ {
+        if a[i] != b[i] {
+            diff++
+        }
+    }
+    if diff == 1 {
+        return true
+    } else {
+        return false
+    }
+}
+
 type Node struct {
     visited bool
     depth int
@@ -12,7 +67,8 @@ type Node struct {
 	path []string
 }
 
-func findLadders(beginWord string, endWord string, wordList []string) [][]string {
+// Wrong Answer
+func ngSolution(beginWord string, endWord string, wordList []string) [][]string {
 	result := [][]string{}
     if !contains(endWord, wordList) ||
         reflect.DeepEqual(wordList, []string{beginWord, endWord}) {
