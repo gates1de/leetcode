@@ -4,6 +4,27 @@ import (
 )
 
 func findIntegers(n int) int {
+    n += 1
+    f := map[int]int{0: 0, 1: 1, 2: 2}
+    var next, out int
+    for next = 4; next <= n + 1; next <<= 1 {
+        f[next] = f[next / 2] + f[next / 4]
+    }
+    for next /= 2; n != 0 && next != 0; next /= 2 {
+        if n & next == 0 {
+            continue
+        }
+        out += f[next]
+        n -= next
+        if n >= next / 2 {
+            n = next / 2
+        }
+    }
+    return out
+}
+
+// Out of memory
+func ngSolution(n int) int {
 	digit := int(0)
 	m := map[int]int{}
 	m[0] = 1
@@ -63,7 +84,10 @@ func main() {
 	// n := int(32)
 
 	// result: 22
-	n := int(64)
+	// n := int(64)
+
+	// result: 
+	n := int(1000000)
 
 	// result: 
 	// n := int(0)
