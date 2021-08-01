@@ -1,9 +1,113 @@
 package main
 import (
 	"fmt"
+	"math"
 )
 
 func largestIsland(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	potIsland := make(map[int]int)
+	islands := []int{}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] == 0 {
+				continue
+			}
+			key := potKey(i, j)
+			if _, ok := potIsland[key]; !ok {
+				islands = dfs(grid, i, j, potIsland, islands)
+			}
+		}
+	}
+	max := maxInArr(islands)
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] == 1 {
+				continue
+			}
+			sum := countSum(grid, i, j, potIsland, islands)
+			if max < sum {
+				max = sum
+			}
+		}
+	}
+	return max
+}
+
+func potKey(i int, j int) int {
+	return i * 500 + j
+}
+
+func dfsInt(islandInd int, grid [][]int, i int, j int, potIsland map[int]int) int{
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) || grid[i][j] == 0 {
+		return 0
+	}
+	key := potKey(i, j)
+	if _, ok := potIsland[key]; ok {
+		return 0
+	}
+	island := 1
+	potIsland[key] = islandInd
+	island += dfsInt(islandInd, grid, i - 1, j, potIsland)
+	island += dfsInt(islandInd, grid, i, j - 1, potIsland)
+	island += dfsInt(islandInd, grid, i, j + 1, potIsland)
+	island += dfsInt(islandInd, grid, i + 1, j, potIsland)
+	return island
+}
+
+func dfs(grid [][]int, i int, j int, potIsland map[int]int, islands []int) []int {
+	islandInd := len(islands)
+	oneIsland := dfsInt(islandInd, grid, i, j, potIsland)
+	if oneIsland == 0 {
+		return islands
+	}
+	return append(islands, oneIsland)
+
+}
+
+func maxInArr(arr []int) int {
+	max := math.MinInt32
+	for _, i := range(arr) {
+		if max < i {
+			max = i
+		}
+	}
+	return max
+}
+
+func adjIsland(grid [][]int, i int, j int, potIsland map[int]int) int {
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) {
+		return -1
+	}
+	if island, ok := potIsland[potKey(i, j)]; ok {
+		return island
+	}
+	return -1
+}
+
+func countSum(grid [][]int, i int, j int, potIsland map[int]int, islands []int) int {
+	adjIslands := make(map[int]bool)
+	if n := adjIsland(grid, i - 1, j, potIsland); n != -1 {
+		adjIslands[n] = true
+	}
+	if n := adjIsland(grid, i, j - 1, potIsland); n != -1 {
+		adjIslands[n] = true
+	}
+	if n := adjIsland(grid, i, j + 1, potIsland); n != -1 {
+		adjIslands[n] = true
+	}
+	if n := adjIsland(grid, i + 1, j, potIsland); n != -1 {
+		adjIslands[n] = true
+	}
+	sum := 1
+	for k, _ := range(adjIslands) {
+		sum += islands[k]
+	}
+	return sum
+}
+
+// Time Limit Exceeded
+func ngSolution(grid [][]int) int {
 	isAllOne := true
     result := int(0)
     for i, row := range grid {
