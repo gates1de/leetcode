@@ -4,6 +4,37 @@ import (
 )
 
 func stoneGame(piles []int) bool {
+    memo := map[[2]int]int{}
+    return score(piles, 0, len(piles) - 1, memo) > 0
+}
+
+func score(piles []int, leftIndex int, rightIndex int, memo map[[2]int]int) int {
+    if leftIndex == rightIndex {
+        return piles[leftIndex]
+    }
+
+    if v, ok := memo[[2]int{leftIndex, rightIndex}]; ok {
+        return v
+    }
+
+    a := piles[leftIndex] - score(piles, leftIndex + 1, rightIndex, memo)
+    b := piles[rightIndex] - score(piles, leftIndex, rightIndex - 1, memo)
+    result := max(a, b)
+    memo[[2]int{leftIndex, rightIndex}] = result
+    return result
+}
+
+func max(a int, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+
+// Time Limit Exceeded
+
+func ngSolution(piles []int) bool {
 	return helper(0, 0, 1, piles)
 }
 
