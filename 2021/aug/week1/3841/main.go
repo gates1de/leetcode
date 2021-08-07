@@ -1,10 +1,42 @@
 package main
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
 func minCut(s string) int {
+    if len(s) == 1 {
+        return 0
+    }
+    dict := make(map[int]int)
+    return helper(s, dict)
+}
+
+func helper(s string, dict map[int]int) int {
+    if len(s) == 0 {
+        return -1
+    }
+
+    if v, ok := dict[len(s)]; ok {
+        return v
+    }
+
+    result := math.MaxInt64
+    for i := 1; i <= len(s); i++ {
+        if isPalindrome(s[:i]) {
+            min := 1 + helper(s[i:], dict)
+            if min < result {
+                result = min
+            }
+        }
+	}
+    dict[len(s)] = result
+    return result
+}
+
+// Wrong Answer
+func ngSolution(s string) int {
 	if len(s) == 1 {
 		return 0
 	}
@@ -73,10 +105,10 @@ func main() {
 	// s := "aaabaaaa"
 
 	// result: 4
-	// s := "abacbccaab"
+	s := "abacbccaab"
 
 	// result: 1
-	s := "aaabaa"
+	// s := "aaabaa"
 
 	// result: 
 	// s := ""
