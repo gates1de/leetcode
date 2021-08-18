@@ -5,6 +5,33 @@ import (
 )
 
 func numDecodings(s string) int {
+	if len(s) == 0 || s[0] == '0' {
+		return 0
+	} else if len(s) == 1 {
+		return 1
+	}
+
+	result := int(1)
+	prevCount := int(1)
+	for i := 1; i < len(s); i++ {
+		currCount := 0
+		if s[i - 1] == '1' || (s[i - 1] == '2' && s[i] < '7') {
+			currCount += prevCount
+		}
+
+		if s[i] > '0' {
+			currCount += result
+		}
+
+		prevCount = result
+		result = currCount
+	}
+
+	return result
+}
+
+// Time Limit Exceeded
+func ngSolution(s string) int {
 	if len(s) == 1 {
 		if s == "0" {
 			return 0
