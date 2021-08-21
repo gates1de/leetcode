@@ -3,7 +3,67 @@ import (
 	"fmt"
 )
 
+const dot byte = '.'
+
 func solveSudoku(board [][]byte)  {
+    helper(0, 0, &board)
+}
+
+func helper(i, j int, board *[][]byte) bool {
+    if j == 9 {
+        j = 0
+        i++
+    }
+    if i == 9 {
+        return true
+    }
+    if (*board)[i][j] != dot {
+        return helper(i, j + 1, board)
+    }
+
+    for candidate := byte('1'); candidate <= byte('9'); candidate++ {
+        if isValid(i, j, candidate, *board) {
+            (*board)[i][j] = candidate
+            if helper(i, j + 1, board) {
+                return true
+            }
+        }
+    }
+    (*board)[i][j] = '.'
+    return false
+}
+
+func isValid(i, j int, input byte, board [][]byte) bool {
+    // validate a row
+    for pointer := 0; pointer < 9; pointer++ {
+        if board[i][pointer] == input {
+            return false
+        }
+    }
+
+    // validate a col
+    for pointer := 0; pointer < 9; pointer++ {
+        if board[pointer][j] == input {
+            return false
+        }
+    }
+
+
+    // validate a square
+    startRow, startCol := (i / 3) * 3, (j / 3) * 3;
+    for row := startRow; row < startRow + 3; row++ {
+        for col := startCol; col < startCol + 3; col++ {
+            if board[row][col] == input {
+                return false
+            }
+        }
+    }
+    return true
+
+}
+
+// Wrong Answer
+func ngSolution(board [][]byte)  {
 	m := map[[2]int]map[byte]bool{}
 	remainCount := int(0)
 	for i, row := range board {
