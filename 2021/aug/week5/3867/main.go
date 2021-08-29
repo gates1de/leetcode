@@ -5,6 +5,24 @@ import (
 )
 
 func minPatches(nums []int, n int) int {
+    l := len(nums)
+    max := 0
+    res := 0
+    i := 0
+    for max < n {
+        if i < l && nums[i] <= max + 1 {
+            max += nums[i]
+            i++
+        } else {
+            max += max + 1
+            res++
+        }
+    }
+    return res
+}
+
+// Time Limit Exceeded (& Wrong Answer?)
+func ngSolution(nums []int, n int) int {
 	result := int(0)
 	helper(-1, nums, n, &result)
 	return result
@@ -90,9 +108,9 @@ func main() {
 	// nums := []int{1, 2, 2}
 	// n := int(5)
 
-	// result: 
-	nums := []int{1, 3, 9, 10000}
-	n := int(100000000)
+	// result: 28
+	nums := []int{1, 2, 31, 33}
+	n := int(2147483647)
 
 	// result: 
 	// nums := []int{}
