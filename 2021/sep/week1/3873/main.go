@@ -4,7 +4,68 @@ import (
 	"sort"
 )
 
-func outerTrees(trees [][]int) [][]int {
+func outerTrees(points [][]int) [][]int {
+    if len(points) <= 1 {
+        return points
+    }
+
+    bm := bottomLeft(points)
+    sort.Slice(points, func (i int, j int) bool {
+        diff := orientation(bm, points[i], points[j])
+        if diff == 0 {
+            return distance(bm, points[i]) < distance(bm, points[j])
+        } else {
+            return diff < 0
+        }
+    })
+
+    i := len(points) - 1
+    for i >= 0 && orientation(bm, points[len(points) - 1], points[i]) == 0 {
+        i--
+    }
+
+    j, k := i + 1, len(points) - 1
+    for j < k {
+        points[j], points[k] = points[k], points[j]
+        j++
+        k--
+    }
+
+    stack := [][]int{points[0], points[1]}
+
+    for p := 2; p < len(points); p++ {
+        top := stack[len(stack) - 1]
+        stack = stack[:len(stack) - 1]
+        for orientation(stack[len(stack) - 1], top, points[p]) > 0 {
+            top = stack[len(stack) - 1]
+            stack = stack[:len(stack) - 1]
+        }
+        stack = append(stack, top)
+        stack = append(stack, points[p])
+    }
+    return stack
+}
+
+func bottomLeft(points [][]int) []int {
+    res := points[0]
+    for _, v := range points {
+        if v[1] < res[1] {
+            res = v
+        }
+    }
+    return res
+}
+
+func orientation(p []int, q []int, r []int) int {
+    return (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
+}
+
+func distance(p []int, q []int) int {
+    return (p[0] - q[0]) * (p[0] - q[0]) + (p[1] - q[1]) * (p[1] - q[1])
+}
+
+// Wrong Answer
+func ngSolution(trees [][]int) [][]int {
 	sort.Slice(trees, func (a, b int) bool { return trees[a][1] < trees[b][1] })
 	return convexHull(trees, len(trees))
 }
