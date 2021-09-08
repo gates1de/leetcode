@@ -6,20 +6,32 @@ import (
 const byteA = byte(97)
 
 func shiftingLetters(s string, shifts []int) string {
-	for i, shift := range shifts {
-		shifts[i] %= 26
-		for j := 0; j < i; j++ {
-			shifts[j] = (shifts[j] + shift) % 26
-		}
+	acum := 0
+	ans := make([]byte, len(s))
+	for i := len(s) - 1; i >= 0; i-- {
+		acum = (acum + shifts[i]) % 26
+		ans[i] = 97 + (s[i]+byte(acum)-97)%26
 	}
-	// fmt.Printf("shifts = %v\n", shifts)
+	return string(ans)
+}
+
+// Slow & Use more memory
+func mySolution(s string, shifts []int) string {
+	sum := int(0)
+	for _, shift := range shifts {
+		sum = (sum + shift) % 26
+	}
 
 	chars := make([]rune, len(s))
 	for i, r := range s {
 		b := byte(r)
-		shift := byte(shifts[i])
-		newByte := byteA + ((b - byteA + shift) % 26)
+		newByte := byteA + ((b - byteA + byte(sum)) % 26)
 		chars[i] = rune(newByte)
+		sum -= shifts[i]
+		sum %= 26
+		if sum < 0 {
+			sum += 26
+		}
 		// fmt.Printf("b = %v, newByte = %v, s = %v\n", b, newByte, string(rune(newByte)))
 	}
 
