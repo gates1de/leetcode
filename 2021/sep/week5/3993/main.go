@@ -5,6 +5,47 @@ import (
 )
 
 func canPartitionKSubsets(nums []int, k int) bool {
+    if k == 1 {
+		return true
+	}
+    sum := 0
+    max := 0
+    for _, v := range nums {
+        sum += v
+        if v > max {
+			max = v
+		}
+    }
+    if sum % k != 0 || max > sum / k {
+		return false
+	}
+    sort.Slice(nums, func(a, b int) bool { return nums[a] > nums[b] })
+    seen := make([]bool, len(nums))
+    return dfs(nums, seen, 0, 0, k, sum / k)
+}
+
+func dfs(nums []int, seen []bool, start, sum, k, target int) bool {
+    if k == 1 {
+		return true
+	}
+    if sum == target {
+		return dfs(nums, seen, 0, 0, k - 1, target)
+	}
+
+    for i := start; i < len(nums); i++ {
+        if !seen[i] && sum + nums[i] <= target {
+            seen[i] = true
+            if dfs(nums, seen, i + 1, nums[i] + sum, k, target) {
+				return true
+			}
+            seen[i] = false
+        }
+    }
+    return false
+}
+
+// Wrong Answer
+func ngSolution(nums []int, k int) bool {
 	s := sum(nums)
 	if s % k != 0 {
 		return false
