@@ -5,6 +5,46 @@ import (
 )
 
 func calculateMinimumHP(dungeon [][]int) int {
+	m := len(dungeon) - 1
+	n := len(dungeon[0]) - 1
+
+	for i := m; i >= 0; i-- {
+		for j := n; j >= 0; j-- {
+			if i == m && j == n {
+				dungeon[i][j] = max(1, 1 - dungeon[i][j])
+				continue
+			}
+			if i == m {
+				dungeon[i][j] = max(1, dungeon[i][j + 1] - dungeon[i][j])
+				continue
+			}
+			if j == n {
+				dungeon[i][j] = max(1, dungeon[i + 1][j] - dungeon[i][j])
+				continue
+			}
+			dungeon[i][j] = max(1, min(dungeon[i + 1][j], dungeon[i][j + 1]) - dungeon[i][j])
+		}
+	}
+
+	return dungeon[0][0]
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+// Time Limit Exceeded
+func ngSolution(dungeon [][]int) int {
 	result := math.MinInt32
 	helper(0, 0, dungeon[0][0], dungeon[0][0], dungeon, &result)
 	if result >= 0 {
