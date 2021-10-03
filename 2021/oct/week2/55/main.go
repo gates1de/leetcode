@@ -4,6 +4,29 @@ import (
 )
 
 func canJump(nums []int) bool {
+    memo := make([]int, len(nums))
+    memo[len(nums) - 1] = 1
+    for i := len(nums) - 2; i >= 0; i-- {
+        furthestJump := min(i + nums[i], len(nums) - 1)
+        for j := i + 1; j <= furthestJump; j++ {
+            if memo[j] == 1 {
+                memo[i] = 1
+                break
+            }
+        }
+    }
+    return memo[0] == 1
+}
+
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
+// Time Limit Exceeded
+func ngSolution(nums []int) bool {
 	for i := 0; i < len(nums); i++ {
 		num := nums[i]
 		// fmt.Printf("nums[%v] = %v\n", i, num)
