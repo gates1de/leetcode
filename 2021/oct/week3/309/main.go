@@ -4,6 +4,29 @@ import (
 )
 
 func maxProfit(prices []int) int {
+    doNothing := 0
+    buy := -100000
+    sell := -100000
+    tmp := 0
+    for i := 0; i < len(prices); i++ {
+        tmp = doNothing
+        doNothing = max(doNothing, sell)
+        buy = max(buy, tmp - prices[i])
+        sell = buy + prices[i]
+    }
+
+    return max(doNothing, sell)
+}
+
+func max(a, b int) int {
+	if b > a {
+		return b
+	}
+	return a
+}
+
+// Time Limit Exceeded
+func ngSolution(prices []int) int {
 	result := int(0)
 	dp := map[[2]int]int{}
 	helper(0, 0, dp, prices, &result)
