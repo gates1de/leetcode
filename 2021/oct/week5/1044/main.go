@@ -4,6 +4,47 @@ import (
 )
 
 func longestDupSubstring(s string) string {
+	result := ""
+	n := len(s)
+	l := int(0)
+	r := n - 1
+    for l <= r {
+        m := l + (r - l) / 2
+        dup := ""
+        tmp := make(map[string]bool, n - m)
+        for i := 0; i + m <= n; i++ {
+			// fmt.Printf("%v: tmp = %v\n", i, tmp)
+            if _, ok := tmp[s[i:i + m]]; !ok {
+                tmp[s[i:i + m]] = true
+            } else {
+                dup = s[i:i + m]
+                break
+            }
+        }
+
+        if dup == "" {
+            r = m - 1
+        } else {
+            l = m + 1
+            result = dup
+        }
+    }
+
+	if result == "" {
+		m := map[rune]bool{}
+		for _, c := range s {
+			if m[c] {
+				return string(c)
+			}
+			m[c] = true
+		}
+	}
+
+    return result
+}
+
+// Wrong Answer
+func ngSolution(s string) string {
 	m := map[rune]int{}
 	for _, c := range s {
 		m[c]++
@@ -48,7 +89,10 @@ func main() {
 	// s := "aa"
 
 	// result: "ma"
-	s := "nnpxouomcofdjuujloanjimymadkuepightrfodmauhrsy"
+	// s := "nnpxouomcofdjuujloanjimymadkuepightrfodmauhrsy"
+
+	// result: "t"
+	s := "zxcvdqkfawuytt"
 
 	// result: 
 	// s := ""
