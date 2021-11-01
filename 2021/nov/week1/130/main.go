@@ -7,6 +7,50 @@ func solve(board [][]byte)  {
 	m := len(board)
 	n := len(board[0])
 
+	if m == 0 {
+		return
+	}
+
+	for i := 0; i < m; i++ {
+		dfs(i, 0, board)
+		dfs(i, n - 1, board)
+	}
+
+	for j := 0; j < n; j++ {
+		dfs(0, j, board)
+		dfs(m - 1, j, board)
+	}
+
+	for i := range board {
+		for j := range board[i] {
+			if board[i][j] == 'o' {
+				board[i][j] = 'O'
+			} else {
+				board[i][j] = 'X'
+			}
+		}
+	}
+}
+
+func dfs(i int, j int, board [][]byte) {
+	if i < 0 || j < 0 || i >= len(board) || j >= len(board[0]) {
+		return
+	}
+
+	if board[i][j] == 'O' {
+		board[i][j] = 'o'
+		dfs(i - 1, j, board)
+		dfs(i + 1, j, board)
+		dfs(i, j - 1, board)
+		dfs(i, j + 1, board)
+	}
+}
+
+// Out of memory
+func ngSolution(board [][]byte)  {
+	m := len(board)
+	n := len(board[0])
+
 	if m <= 2 || n <= 2 {
 		return
 	}
