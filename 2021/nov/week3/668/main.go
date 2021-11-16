@@ -4,7 +4,36 @@ import (
 	"sort"
 )
 
-func findKthNumber(m int, n int, k int) int {
+func findKthNumber(n int, m int, k int) int {
+	l := int(1)
+	r := n * m
+    result := int(0)
+    for l <= r {
+        mid := l + (r - l) / 2
+        count := int(0)
+        for i := 1; i <= n; i++ {
+            count += min((mid / i), m)
+        }
+        if count >= k {
+            result = mid
+            r = mid - 1
+        } else{
+            l = mid + 1
+        }
+    }
+
+    return result
+}
+
+func min(a int, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
+// Out of Memory
+func ngSolution(m int, n int, k int) int {
 	if m * n == k {
 		return m * n
 	}
