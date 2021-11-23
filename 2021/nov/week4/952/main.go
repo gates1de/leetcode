@@ -1,10 +1,67 @@
 package main
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
+type DSU struct {
+    Parent []int
+}
+
+func (this *DSU) Find(target int) int {
+    if this.Parent[target] != target {
+		this.Parent[target] = this.Find(this.Parent[target])
+	}
+    return this.Parent[target]
+}
+
+func (this *DSU) Union(x, y int) {
+    this.Parent[this.Find(x)] = this.Parent[this.Find(y)]
+}
+
+func Constructor(n int) *DSU {
+    parent := make([]int, n)
+    for i := 0; i < n; i++ {
+		parent[i] = i
+	}
+    return &DSU{ parent }
+}
+
 func largestComponentSize(nums []int) int {
+    result := int(1)
+    max := int(0)
+    cache := map[int]int{}
+
+    for _, num := range nums {
+		if num > max {
+			max = num
+		}
+	}
+
+    dsu := Constructor(max + 1)
+    for _, num := range nums {
+        for k := 2; k <= int(math.Sqrt(float64(num))); k++ {
+            if num % k == 0 {
+                dsu.Union(num, k)
+                dsu.Union(num, num / k)
+            }
+        }
+    }
+
+    for _, num := range nums {
+        r := dsu.Find(num)
+        cache[r]++
+        if cache[r] > result {
+			result = cache[r]
+		}
+    }
+
+    return result
+}
+
+// Time Limit Exceeded
+func ngSolution(nums []int) int {
 	sort.Ints(nums)
 	primes := eratosthenes(nums[len(nums) - 1])
 	// fmt.Printf("primes = %v\n", primes)
