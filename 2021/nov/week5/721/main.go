@@ -5,6 +5,50 @@ import (
 )
 
 func accountsMerge(accounts [][]string) [][]string {
+	emailMap := make(map[string]int)
+	indexConnections := make([]int, len(accounts))
+	for i := range indexConnections {
+		indexConnections[i] = i
+	}
+
+	for accountIndex, emails := range accounts {
+		for i := 1; i < len(emails); i++ {
+			if existIndex, exist := emailMap[emails[i]]; exist {
+				for {
+					if indexConnections[existIndex] == existIndex {
+						indexConnections[existIndex] = accountIndex
+						break
+					}
+					existIndex, indexConnections[existIndex] = indexConnections[existIndex], accountIndex
+				}
+			} else {
+				emailMap[emails[i]] = accountIndex
+			}
+		}
+	}
+
+	for i := len(indexConnections)-1; i >= 0; i-- {
+		indexConnections[i] = indexConnections[indexConnections[i]]
+	}
+
+	magic := make(map[int][]string)
+	for email, index := range emailMap {
+		if _, exist := magic[indexConnections[index]]; !exist {
+			magic[indexConnections[index]] = []string{accounts[index][0]}
+		}
+		magic[indexConnections[index]] = append(magic[indexConnections[index]], email)
+	}
+
+	result := make([][]string, 0, len(magic))
+	for _, v := range magic {
+		sort.Strings(v[1:])
+		result = append(result, v)
+	}
+	return result
+}
+
+// Wrong Answer
+func ngSolution(accounts [][]string) [][]string {
 	m := map[string][]int{}
 	for i, addresses := range accounts {
 		for _, address := range addresses[1:] {
