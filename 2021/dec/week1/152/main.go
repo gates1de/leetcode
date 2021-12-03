@@ -5,6 +5,38 @@ import (
 )
 
 func maxProduct(nums []int) int {
+	result := nums[0]
+	curMin := nums[0]
+	curMax := nums[0]
+	for _, num := range nums[1:] {
+        if num < 0 {
+            curMin, curMax = curMax, curMin
+        }
+
+        curMin = min(curMin * num, num)
+        curMax = max(curMax * num, num)
+		result = max(result, curMax)
+	}
+
+	return result
+}
+
+func max(a int, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func min(a int, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// Wrong Answer
+func ngSolution(nums []int) int {
 	if len(nums) == 1 {
 		return nums[0]
 	}
