@@ -10,6 +10,40 @@ type TreeNode struct {
 }
 
 func rob(root *TreeNode) int {
+	return traversal(root, make(map[*TreeNode]int))
+}
+
+func traversal(root *TreeNode, dp map[*TreeNode]int) int {
+	if root == nil {
+		return 0
+	}
+	if val, ok := dp[root]; ok {
+		return val
+	}
+
+	val := int(0)
+	if root.Left != nil {
+		val += traversal(root.Left.Left, dp) + traversal(root.Left.Right, dp)
+	}
+	if root.Right != nil {
+		val += traversal(root.Right.Left, dp) + traversal(root.Right.Right, dp)
+	}
+
+	val = max(val + root.Val, traversal(root.Left, dp) + traversal(root.Right, dp))
+	dp[root] = val
+
+	return val
+}
+
+func max(a int, b int) int {
+	if a < b {
+		return b
+	}
+	return a
+}
+
+// Time Limit Exceeded
+func ngSolution(root *TreeNode) int {
 	if root == nil {
 		return 0
 	}
