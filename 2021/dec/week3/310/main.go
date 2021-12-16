@@ -4,6 +4,39 @@ import (
 )
 
 func findMinHeightTrees(n int, edges [][]int) []int {
+    graph := make([][]int, n)
+    for _,v := range edges {
+        graph[v[0]] = append(graph[v[0]], v[1])
+        graph[v[1]] = append(graph[v[1]], v[0])
+    }
+
+    visited1 := make([]bool, n)
+    route1 := dfs(graph, 0, visited1)
+
+    visited2 := make([]bool, n)
+    longestRoute := dfs(graph, route1[0], visited2)
+
+    return longestRoute[(len(longestRoute) - 1) / 2 : len(longestRoute) / 2 + 1]
+}
+
+func dfs(graph [][]int, n int, visited []bool) []int {
+    visited[n] = true
+
+    var res []int
+    for _, v := range graph[n] {
+        if !visited[v] {
+            route := dfs(graph, v, visited)
+            if len(route) > len(res) {
+                res = route
+            }
+        }
+    }
+
+    return append(res, n)
+}
+
+// Time Limit Exceeded
+func ngSolution(n int, edges [][]int) []int {
 	if n == 1 || len(edges) == 0 {
 		return []int{0}
 	}
