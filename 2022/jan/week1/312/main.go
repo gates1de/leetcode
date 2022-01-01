@@ -3,6 +3,34 @@ import (
 	"fmt"
 )
 
+func maxCoins(nums []int) int {
+    nums = append([]int{1}, nums...)
+    nums = append(nums, 1)
+
+    fmt.Println(nums)
+	n := len(nums)
+    m := make([][]int, n)
+    for i := range(m) {
+        m[i] = make([]int, n)
+    }
+
+	for window := 2; window < n; window++ {
+		for left := 0; left + window < n; left++ {
+			max := int(0)
+			right := left + window
+			for i := left + 1; i < right; i++ {
+				tmp := nums[left] * nums[i] * nums[right] + m[left][i] + m[i][right]
+				if tmp > max {
+					max = tmp
+					m[left][right] = tmp
+				}
+			}
+		}
+	}
+
+    return m[0][n - 1]
+}
+
 // Wrong Answer
 func ngSolution(nums []int) int {
 	if len(nums) == 0 {
