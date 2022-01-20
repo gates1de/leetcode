@@ -4,6 +4,51 @@ import (
 )
 
 func minEatingSpeed(piles []int, h int) int {
+	pileMax := int(0)
+	total := int(0)
+	for _, pile := range piles {
+		total += pile
+		if pile > pileMax {
+			pileMax = pile
+		}
+	}
+
+	minH := max(total / h, 1)
+	k := -1
+	for k != (pileMax + minH) >> 1 {
+		k = (pileMax + minH) >> 1
+		if isEatOver(piles, h, k) {
+			pileMax = k
+		} else {
+			minH = k + 1
+		}
+	}
+	return k
+}
+
+func isEatOver(piles []int, h int, k int) bool {
+	for _, pile := range piles {
+		cost := pile / k
+		if pile % k != 0 {
+			cost++
+		}
+		h -= cost
+		if h < 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func max(a int, b int) int {
+	if b > a {
+		return b
+	}
+	return a
+}
+
+// Time Limit Exceeded
+func ngSolution(piles []int, h int) int {
 	k := int(1)
 	for true {
 		currentH := int(0)
