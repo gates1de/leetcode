@@ -7,6 +7,20 @@ import (
 const MAX = int(100000)
 
 func winnerSquareGame(n int) bool {
+    dp := make([]bool, n + 1)
+    for i := 1; i <= n; i++ {
+        for k := 1; k * k <= i; k++ {
+            if !dp[i - k * k] {
+                dp[i] = true
+                break
+            }
+        }
+    }
+    return dp[n]
+}
+
+// Wrong Answer
+func ngSolution(n int) bool {
 	removes := []int{}
 	for i := 1; i * i <= MAX; i++ {
 		removes = append(removes, i * i)
@@ -81,10 +95,10 @@ func main() {
 	// n := int(32897)
 
 	// result: true
-	n := int(99999)
+	// n := int(99999)
 
 	// result: true
-	// n := int(70)
+	n := int(70)
 
 	// result: 
 	// n := int(0)
