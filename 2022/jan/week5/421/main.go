@@ -4,6 +4,24 @@ import (
 )
 
 func findMaximumXOR(nums []int) int {
+    result := int(0)
+    for i := 31; i >= 0; i-- {
+        result <<= 1
+        pre := make(map[int]bool)
+        for _, n := range nums {
+			pre[n >> i] = true
+		}
+        for p := range pre {
+			if pre[result ^ 1 ^ p] {
+				result += 1
+				break
+			}
+		}
+    }
+    return result
+}
+
+func ngSolution(nums []int) int {
 	result := int(0)
 	for i := 0; i < len(nums); i++ {
 		n1 := nums[i]
