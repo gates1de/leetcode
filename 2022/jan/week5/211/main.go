@@ -4,94 +4,137 @@ import (
 )
 
 type WordDictionary struct {
-	Root *TrieNode
-}
-
-type TrieNode struct {
-	Char rune
-	Next [27]*TrieNode
+	isWord   bool
+	Next [26]*WordDictionary
 }
 
 func Constructor() WordDictionary {
-	return WordDictionary{Root: &TrieNode{Char: rune('.')}}
+	return WordDictionary{}
 }
-
 
 func (this *WordDictionary) AddWord(word string) {
-	root := this.Root
+	node := this
 	for _, char := range word {
-		if root.Next[char - 'a'] == nil {
-			root.Next[char - 'a'] = &TrieNode{Char: char}
+		if node.Next[char - 'a'] == nil {
+			node.Next[char - 'a'] = &WordDictionary{}
 		}
-		root = root.Next[char - 'a']
+		node = node.Next[char - 'a']
 	}
-	root.Next[26] = &TrieNode{Char: rune('X')}
+	node.isWord = true
 }
-
 
 func (this *WordDictionary) Search(word string) bool {
-	nodes := []*TrieNode{this.Root}
-
-	TOP:
+	node := this
 	for i, char := range word {
-		isLastChar := i == len(word) - 1
-		if len(nodes) == 0 {
-			return false
-		}
-
 		if char == '.' {
-			newNodes := []*TrieNode{}
-			for _, node := range nodes {
-				for _, n := range node.Next {
-					if n == nil {
-						continue
-					}
-					if isLastChar && n.Next[26] != nil {
-						return true
-					}
-					newNodes = append(newNodes, n)
+			for _, node := range node.Next {
+				if node == nil {
+					continue
 				}
-			}
-			nodes = newNodes
-			continue
-		}
-
-		for len(nodes) > 0 {
-			node := nodes[0]
-			nodes = nodes[1:]
-
-			if node.Next[char - 'a'] != nil {
-				if isLastChar && node.Next[char - 'a'].Next[26] != nil {
+				if node.Search(word[i+1:]) {
 					return true
 				}
-
-				nodes = []*TrieNode{node.Next[char - 'a']}
-				continue TOP
 			}
+			return false
 		}
-
-		return false
+		if node.Next[char - 'a'] == nil {
+			return false
+		}
+		node = node.Next[char - 'a']
 	}
-
-	// fmt.Println(string(nodes[0].Char))
-	return len(nodes) == 0
+	return node.isWord
 }
 
-func printNodes(root *TrieNode) {
-	nodes := []*TrieNode{root}
-	for len(nodes) > 0 {
-		node := nodes[0]
-		nodes = nodes[1:]
-		for _, n := range node.Next {
-			if n == nil {
-				continue
-			}
-			fmt.Printf("node.Char = %v\n", string(n.Char))
-			nodes = append(nodes, n)
-		}
-		fmt.Println("--------------")
-	}
-}
+// Wrong Answer
+// type WordDictionary struct {
+// 	Root *TrieNode
+// }
+// 
+// type TrieNode struct {
+// 	Char rune
+// 	Next [27]*TrieNode
+// }
+// 
+// func Constructor() WordDictionary {
+// 	return WordDictionary{Root: &TrieNode{Char: rune('.')}}
+// }
+// 
+// 
+// func (this *WordDictionary) AddWord(word string) {
+// 	root := this.Root
+// 	for _, char := range word {
+// 		if root.Next[char - 'a'] == nil {
+// 			root.Next[char - 'a'] = &TrieNode{Char: char}
+// 		}
+// 		root = root.Next[char - 'a']
+// 	}
+// 	root.Next[26] = &TrieNode{Char: rune('X')}
+// }
+// 
+// 
+// func (this *WordDictionary) Search(word string) bool {
+// 	nodes := []*TrieNode{this.Root}
+// 
+// 	TOP:
+// 	for i, char := range word {
+// 		isLastChar := i == len(word) - 1
+// 		if len(nodes) == 0 {
+// 			return false
+// 		}
+// 
+// 		if char == '.' {
+// 			newNodes := []*TrieNode{}
+// 			for _, node := range nodes {
+// 				for _, n := range node.Next {
+// 					if n == nil {
+// 						continue
+// 					}
+// 					if isLastChar && n.Next[26] != nil {
+// 						return true
+// 					}
+// 					newNodes = append(newNodes, n)
+// 				}
+// 			}
+// 			nodes = newNodes
+// 			continue
+// 		}
+// 
+// 		for len(nodes) > 0 {
+// 			node := nodes[0]
+// 			nodes = nodes[1:]
+// 
+// 			if node.Next[char - 'a'] != nil {
+// 				if isLastChar && node.Next[char - 'a'].Next[26] != nil {
+// 					return true
+// 				}
+// 
+// 				nodes = []*TrieNode{node.Next[char - 'a']}
+// 				continue TOP
+// 			}
+// 		}
+// 
+// 		return false
+// 	}
+// 
+// 	// fmt.Println(string(nodes[0].Char))
+// 	return len(nodes) == 0
+// }
+// 
+// func printNodes(root *TrieNode) {
+// 	nodes := []*TrieNode{root}
+// 	for len(nodes) > 0 {
+// 		node := nodes[0]
+// 		nodes = nodes[1:]
+// 		for _, n := range node.Next {
+// 			if n == nil {
+// 				continue
+// 			}
+// 			fmt.Printf("node.Char = %v\n", string(n.Char))
+// 			nodes = append(nodes, n)
+// 		}
+// 		fmt.Println("--------------")
+// 	}
+// }
 
 func main() {
 	obj := Constructor()
