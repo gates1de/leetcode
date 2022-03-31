@@ -1,10 +1,53 @@
 package main
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
 func splitArray(nums []int, m int) int {
+    length := len(nums)
+    dp := make([][]int, length + 1)
+    for i := 0; i <= length; i++ {
+        dp[i] = make([]int, m + 1)
+        for j := 0; j <= m; j++ {
+            dp[i][j] = math.MaxInt32
+        }
+    }
+
+    sums := make([]int, length + 1)
+    for i := 0; i < length; i++ {
+        sums[i + 1] = sums[i] + nums[i]
+    }
+
+    dp[0][0] = 0
+    for i := 1; i <= length; i++ {
+        for j := 1; j <= m; j++ {
+            for k := 0; k < i; k++ {
+                dp[i][j] = min(dp[i][j], max(dp[k][j - 1], sums[i] - sums[k]))
+            }
+        }
+    }
+
+    return dp[length][m]
+}
+
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+// Wrong Answer
+func ngSolution(nums []int, m int) int {
 	n := len(nums)
 	sum := rangeSum(nums, 0, len(nums) - 1)
 	result := sum
