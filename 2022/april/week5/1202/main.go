@@ -4,12 +4,65 @@ import (
 	"sort"
 )
 
+
+func smallestStringWithSwaps(s string, pairs [][]int) string {
+    result := []byte(s)
+    ds := make([]int, len(s))
+    for i := 0; i < len(ds); i++ {
+        ds[i] = i
+    }
+
+    m := make([][]int, len(s))
+    for _, p := range pairs {
+        merge(ds, p[0], p[1])
+    }
+
+    for i, _ := range s {
+        u := find(ds, i)
+        m[u] = append(m[u], i)
+    }
+
+    for _, idxs := range m {
+        bs := []byte{}
+        for _, idx := range idxs {
+            bs = append(bs, s[idx])
+        }
+
+        sort.Slice(bs, func(i, j int) bool {
+            return bs[i] < bs[j]
+        })
+
+        for i, idx := range idxs {
+            result[idx] = bs[i]
+        }
+    }
+
+    return string(result)
+}
+
+func find(ds []int, u int) int {
+    if ds[u] == u {
+        return u
+    }
+    ds[u] = find(ds, ds[u])
+    return ds[u]
+}
+
+func merge(ds []int, u, v int) {
+    u = find(ds, u)
+    v = find(ds, v)
+    if u != v {
+        ds[u] = v
+    }
+}
+
 type IndexedRune struct {
 	Rune rune
 	Index int
 }
 
-func smallestStringWithSwaps(s string, pairs [][]int) string {
+// Time Limit Exceeded
+func ngSolution(s string, pairs [][]int) string {
 	components := [][]int{}
 	added := map[int]bool{}
 	for i, _ := range s {
