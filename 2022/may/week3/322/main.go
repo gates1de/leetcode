@@ -6,6 +6,35 @@ import (
 )
 
 func coinChange(coins []int, amount int) int {
+    dp := make([]int, amount + 1)
+    
+    for i := 1; i <= amount; i++ {
+        minCoin := math.MaxInt32
+        for _, coin := range coins {
+            if i - coin >= 0 && dp[i - coin] != -1 {
+                minCoin = min(minCoin, dp[i - coin] + 1)
+            }
+        }
+        
+        if minCoin == math.MaxInt32 {
+            dp[i] = -1
+        } else {
+            dp[i] = minCoin
+        }
+    }
+    
+    return dp[amount]
+}
+
+func min(a int, b int) int {
+    if a > b {
+        return b
+    }
+    return a
+}
+
+// Time Limit Exceeded
+func ngSolution(coins []int, amount int) int {
 	if amount == 0 {
 		return 0
 	}
@@ -115,7 +144,7 @@ func main() {
 	// coins := []int{3,4,1,7,4,6,2,6,5}
 	// amount := int(149)
 
-	// result: 
+	// result: 20
 	coins := []int{186, 419, 83, 408}
 	amount := int(6249)
 
