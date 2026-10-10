@@ -48,6 +48,16 @@ func minSumSquareDiff(nums1 []int, nums2 []int, k1 int, k2 int) int64 {
 			break
 		}
 	}
+	if !partial && level > 0 && remaining > 0 {
+		cost := level * int64(topCount)
+		if remaining >= cost {
+			level = 0
+		} else {
+			level -= remaining / int64(topCount)
+			extra = remaining % int64(topCount)
+			partial = true
+		}
+	}
 
 	result := int64(0)
 	for _, difference := range differences[:len(differences)-topCount] {
@@ -75,10 +85,16 @@ func main() {
 	// k2 := int(0)
 
 	// result: 43
-	nums1 := []int{1, 4, 10, 12}
-	nums2 := []int{5, 8, 6, 9}
-	k1 := int(1)
-	k2 := int(1)
+	// nums1 := []int{1,4,10,12}
+	// nums2 := []int{5,8,6,9}
+	// k1 := int(1)
+	// k2 := int(1)
+
+	// result: 36
+	nums1 := []int{1,4,10,12}
+	nums2 := []int{5,8,6,9}
+	k1 := int(10)
+	k2 := int(5)
 
 	// result: 0
 	// nums1 := []int{}
